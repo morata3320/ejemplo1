@@ -10,15 +10,28 @@ for (const file of ["script.js", "observabilidad.js"]) {
   assert.ok(!/\b(?:eval|Function)\s*\(/.test(source), file + ": ejecución dinámica");
   assert.ok(!/\.(?:innerHTML|outerHTML)\s*=|insertAdjacentHTML\s*\(|document\.write\s*\(/.test(source), file + ": inserción HTML insegura");
 }
+function checkScripts(html) {
+  // Comprobación conservadora del marcado de este sitio, no un sanitizador HTML.
+  const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script[^>]*>/gi)];
+  assert.equal(scripts.length, [...html.matchAll(/<script\b/gi)].length, "Script sin cierre reconocido");
+  for (const [, attributes, body] of scripts) {
+    assert.match(attributes, /^\s+src="(?:observabilidad|script)\.js"(?:\s+defer)?\s*$/i, "Solo scripts locales autorizados");
+    assert.equal(body.trim(), "", "No se permite código inline");
+  }
+}
+for (const closing of ['</script>', '</script >', '</script foo="bar">']) {
+  assert.doesNotThrow(() => checkScripts('<SCRIPT src="script.js">' + closing));
+  assert.throws(() => checkScripts('<SCRIPT src="script.js">alert(1)' + closing));
+  assert.throws(() => checkScripts('<SCRIPT src="https://example.com/test.js">' + closing));
+}
+assert.throws(() => checkScripts('<script src="script.js">'));
 const collector = read("observabilidad.js").replace(/\/\/[^\n]*/g, "");
 assert.ok(!/\b(?:fetch|XMLHttpRequest|WebSocket|EventSource|sendBeacon)\b/.test(collector), "El recolector no debe transmitir datos");
 assert.ok(!/localStorage\.clear\s*\(/.test(collector), "No borrar almacenamiento ajeno");
 for (const file of ["index.html", "observabilidad.html"]) {
   const html = read(file);
   assert.ok(!/\son\w+\s*=|(?:href|src)\s*=\s*["']\s*(?:javascript|vbscript):/i.test(html), file + ": código inline");
-  for (const [tag] of html.matchAll(/<script\b[^>]*>[\s\S]*?<\/script>/gi)) {
-    assert.match(tag, /^<script\s+src="[^":]+"(?:\s+defer)?>\s*<\/script>$/i, "Solo scripts locales sin código inline");
-  }
+  checkScripts(html);
   assert.ok(!/(?:src|href)=["']http:/i.test(html), "Recursos y enlaces externos deben usar HTTPS");
 }
 const tracked = execFileSync("git", ["ls-files", "-z", "--cached", "--others", "--exclude-standard"], { cwd: root, encoding: "utf8" }).split("\0").filter(Boolean);

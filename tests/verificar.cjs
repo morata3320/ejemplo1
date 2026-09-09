@@ -32,7 +32,7 @@ check("Los tres archivos existen, tienen contenido y se leen como UTF-8", () => 
 check("index.html referencia styles.css y script.js con defer", () => {
   const links = [...html.matchAll(/<link\b[^>]*>/g)].map(m => attributes(m[0]));
   assert.ok(links.some(link => link.rel === "stylesheet" && link.href === "styles.css"));
-  const scripts = [...html.matchAll(/<script\b[^>]*>/g)].map(m => m[0]);
+  const scripts = [...html.matchAll(/<script\b[^>]*>/gi)].map(m => m[0]);
   assert.equal(scripts.length, 2);
   assert.equal(attributes(scripts[0]).src, "observabilidad.js");
   assert.equal(attributes(scripts[1]).src, "script.js");
