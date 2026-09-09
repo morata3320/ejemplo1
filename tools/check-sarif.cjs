@@ -11,6 +11,10 @@ function checkReport(report) {
     for (const invocation of run.invocations || []) {
       assert.notEqual(invocation.executionSuccessful, false, "El analizador falló");
     }
+    for (const result of run.results) {
+      const location = result.locations?.[0]?.physicalLocation;
+      console.error(JSON.stringify({ rule: result.ruleId, message: result.message?.text, file: location?.artifactLocation?.uri, line: location?.region?.startLine }));
+    }
     assert.equal(run.results.length, 0, "CodeQL detectó hallazgos; revisar el análisis antes de publicar");
   }
 }

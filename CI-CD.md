@@ -20,7 +20,7 @@ Requiere Git y Node.js 24 o superior:
 node tools/ci.cjs
 ```
 
-CodeQL se ejecuta en GitHub Actions; los informes se comprueban antes del despliegue. La salida del analizador y de la puerta queda en los logs de Actions (no se sube a Code Scanning).
+CodeQL se ejecuta en GitHub Actions; los informes se comprueban antes del despliegue. Los hallazgos se publican en Security > Code scanning y la puerta muestra regla, archivo y línea en los logs de Actions.
 
 ## Alcance
 
