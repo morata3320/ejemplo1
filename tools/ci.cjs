@@ -14,6 +14,6 @@ for (const file of walk(root)) {
   execFileSync(process.execPath, ["--check", file], { stdio: "inherit", cwd: root });
   console.log("Sintaxis OK: " + path.relative(root, file));
 }
-for (const file of ["tests/verificar.cjs", "tests/observabilidad.cjs", "tests/seguridad.cjs", "tests/sarif.cjs", "tools/build.cjs"]) {
+for (const file of ["tests/verificar.cjs", "tests/observabilidad.cjs", "tests/seguridad.cjs", "tests/sarif.cjs", "tests/despliegue.cjs", "tools/build.cjs"]) {
   execFileSync(process.execPath, [file], { stdio: "inherit", cwd: root });
 }

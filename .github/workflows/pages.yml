@@ -82,6 +82,7 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
       - name: Verificar archivos publicados
+        timeout-minutes: 5
         env:
           SITE_URL: ${{ steps.deployment.outputs.page_url }}
         run: node tools/verify-deployment.cjs
