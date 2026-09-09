@@ -111,7 +111,7 @@
   function resourcePath(value) {
     // No guardar consultas, fragmentos ni credenciales en las rutas.
     try { const url = new window.URL(value, window.location.href); return short(url.protocol === "http:" || url.protocol === "https:" ? url.origin + url.pathname : url.protocol, 250); }
-    catch { return short(value).split(/[?#]/)[0]; }
+    catch { return "Ruta no disponible"; }
   }
   window.addEventListener("error", event => {
     const target = event.target;
@@ -138,7 +138,7 @@
   document.addEventListener("visibilitychange", () => record("visibilidad", { state: document.visibilityState || "no disponible" }));
   window.addEventListener("online", () => record("conexion", environment().connection));
   window.addEventListener("offline", () => record("conexion", environment().connection));
-  const connection = readSafely(() => window.navigator.connection);
+  const connection = readSafely(() => window.navigator.connection || window.navigator.mozConnection || window.navigator.webkitConnection);
   if (connection && typeof connection.addEventListener === "function") connection.addEventListener("change", () => record("conexion", environment().connection));
   let resizeTimer;
   window.addEventListener("resize", () => {

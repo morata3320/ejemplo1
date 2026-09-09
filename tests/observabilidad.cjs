@@ -61,6 +61,10 @@ function setup(options = {}) {
       static revokeObjectURL(url) { window.revoked = url; }
     };
   }
+  if (options.connectionAlias) {
+    window.navigator[options.connectionAlias] = window.navigator.connection;
+    delete window.navigator.connection;
+  }
   if (options.blocked) Object.defineProperty(window, "localStorage", { get() { throw new Error("SecurityError"); } });
   else window.localStorage = {
     getItem: key => store.get(key) || null,
@@ -189,5 +193,23 @@ test("Dashboard: actualizar, demostración, limpiar y descarga Blob local", () =
   const unsupported = setup({ dashboard: true, noAPIs: true });
   unsupported.document.emit("DOMContentLoaded");
   assert.equal(unsupported.elements.download.disabled, true);
+});
+
+test("Sin URL no se conservan credenciales ni contenido de rutas", () => {
+  const f = setup({ noAPIs: true });
+  f.window.emit("error", { target: f.window, filename: "https://usuario:secreto@localhost/app.js?token=privado" });
+  const details = f.api.getSnapshot().events.at(-1).details;
+  assert.equal(details.file, "Ruta no disponible");
+  assert.ok(!JSON.stringify(details).includes("secreto"));
+});
+test("Cambios de conexión con APIs prefijadas", () => {
+  for (const connectionAlias of ["mozConnection", "webkitConnection"]) {
+    const f = setup({ connectionAlias });
+    const connection = f.window.navigator[connectionAlias];
+    connection.effectiveType = "2g";
+    connection.emit("change");
+    assert.equal(f.api.getSnapshot().events.at(-1).type, "conexion");
+    assert.equal(f.api.getSnapshot().events.at(-1).details.effectiveType, "2g");
+  }
 });
 console.log(`\n${passed} grupos aprobados. Pendiente: ejecución y descargas en navegador real.`);

@@ -62,3 +62,30 @@ Expón window.CR7Observability.getSnapshot(). El dashboard debe permitir actuali
 Al terminar, valida node --check para todos los archivos JavaScript y explica cómo probar el dashboard manualmente.
 
 Además, guarda este prompt en el archivo PROMPTS.md dentro del proyecto. Si el archivo ya existe, añade este prompt al final sin borrar ni modificar los anteriores. Identifica la herramienta utilizada como Codex y numera el prompt de forma consecutiva.
+---
+
+## Prompt 4
+
+Herramienta utilizada: **Codex**
+
+Añade observabilidad local al sitio existente sin backend, servicios externos ni envío de datos.
+
+Crea o actualiza estos archivos dentro de paginaCristianoRonaldo:
+- observabilidad.html
+- observabilidad.css
+- observabilidad.js
+- script.js, si es necesario para instrumentar la página principal
+
+Registra en localStorage, usando una clave con el prefijo cr7-observability:
+- tiempo de navegación y carga mediante Performance API cuando esté disponible;
+- errores JavaScript y promesas rechazadas;
+- errores de carga de recursos;
+- clics en enlaces, botones y controles;
+- cambios de visibilidad de la pestaña;
+- viewport, conexión y soporte de APIs.
+
+Expón window.CR7Observability.getSnapshot(). El dashboard debe permitir actualizar los datos, generar un evento de demostración, limpiar el almacenamiento y descargar un snapshot JSON. Usa HTML semántico, estados accesibles y diseño responsive. Mantén compatibilidad si alguna API del navegador no existe.
+
+Al terminar, valida node --check para todos los archivos JavaScript y explica cómo probar el dashboard manualmente.
+
+Además, guarda este prompt en el archivo PROMPTS.md dentro del proyecto. Si el archivo ya existe, añade este prompt al final sin borrar ni modificar los anteriores. Identifica la herramienta utilizada como Codex y numera el prompt de forma consecutiva.
